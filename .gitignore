@@ -1,0 +1,54 @@
+# ─── Dependencies ────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ─── Environment / Secrets (NEVER commit these) ──────────────
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.env
+
+# ─── Build outputs ───────────────────────────────────────────
+dist/
+build/
+client/dist/
+server/dist/
+
+# ─── Logs ────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ─── OS generated ────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# ─── Editor & IDE ────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── Testing ─────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── Misc ────────────────────────────────────────────────────
+*.zip
+*.tar.gz
+.cache/
+.temp/
