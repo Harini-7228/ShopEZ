@@ -1,0 +1,124 @@
+import mongoose from 'mongoose';
+
+const orderItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
+  sellerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: [1, 'Quantity must be at least 1'],
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+});
+
+const statusHistorySchema = new mongoose.Schema({
+  status: {
+    type: String,
+    enum: ['pending', 'confirmed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'],
+    required: true,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
+  note: {
+    type: String,
+    trim: true,
+  },
+});
+
+const shippingAddressSchema = new mongoose.Schema({
+  street: { type: String, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  zip: { type: String, required: true },
+  country: { type: String, required: true },
+});
+
+const orderSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    items: [orderItemSchema],
+    shippingAddress: {
+      type: shippingAddressSchema,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'confirmed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'],
+      default: 'pending',
+    },
+    paymentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Payment',
+    },
+    totalAmount: {
+      type: Number,
+      required: true,
+      min: [0, 'Total amount cannot be negative'],
+    },
+    originalAmount: {
+      type: Number,
+      default: null,
+    },
+    discountAmount: {
+      type: Number,
+      default: 0,
+    },
+    couponCode: {
+      type: String,
+      default: null,
+    },
+    deliveryManagerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    statusHistory: [statusHistorySchema],
+    estimatedDeliveryDate: {
+      type: Date,
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Populate status history initial state
+orderSchema.pre('save', function () {
+  if (this.isNew) {
+    this.statusHistory.push({
+      status: this.status,
+      timestamp: new Date(),
+      note: 'Order created',
+    });
+  }
+});
+
+// ── Performance indexes ─────────────────────────────────────────────────────
+// Customer order history (most frequent query)
+orderSchema.index({ userId: 1, createdAt: -1 });
+// Seller order view (items.sellerId lookup)
+orderSchema.index({ 'items.sellerId': 1, createdAt: -1 });
+// Delivery board queries
+orderSchema.index({ deliveryManagerId: 1, status: 1 });
+// Admin/status filter
+orderSchema.index({ status: 1, createdAt: -1 });
+
+export default mongoose.model('Order', orderSchema);
