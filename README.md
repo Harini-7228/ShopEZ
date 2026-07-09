@@ -9,7 +9,7 @@ A premium, production-ready MERN stack e-commerce application with role-based ac
 ### Customer
 - Browse products with category filter bar, search, price range & attribute filters
 - Add to cart with stock validation and quantity controls
-- Full checkout flow with shipping address & simulated payment gateway
+- Full checkout flow with shipping address & Razorpay payment gateway
 - Order history with live status tracking timeline
 - Wishlist management with move-to-cart
 - Price drop & restock alert subscriptions
@@ -36,8 +36,8 @@ A premium, production-ready MERN stack e-commerce application with role-based ac
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | React 18, Vite, React Bootstrap, React Router v6, React Hot Toast |
-| **Backend** | Node.js, Express.js |
+| **Frontend** | React 19, Vite 8, React Bootstrap, React Router v7, React Hot Toast |
+| **Backend** | Node.js, Express.js (Refactored to ES Modules) |
 | **Database** | MongoDB with Mongoose ODM |
 | **Auth** | JWT (dual-cookie: accessToken + refreshToken), role-based guards |
 | **Jobs** | Node-cron background jobs (price alerts, reorder reminders) |
@@ -49,23 +49,30 @@ A premium, production-ready MERN stack e-commerce application with role-based ac
 
 ```
 SHOPEZ/
-├── client/               # React + Vite frontend
+├── client/               # React 19 + Vite frontend
 │   ├── src/
-│   │   ├── api/          # Axios API modules (orders, products, wishlist…)
-│   │   ├── components/   # Navbar, shared layout components
-│   │   ├── context/      # AuthContext, CartContext
+│   │   ├── api/          # Axios API modules (authApi, productsApi, wishlistApi…)
+│   │   ├── components/   # UI components (common/, product/, Navbar.jsx, Layout.jsx)
+│   │   ├── context/      # AuthContext, CartContext, WishlistContext
+│   │   ├── hooks/        # Custom React hooks (useCart, useWishlist…)
 │   │   ├── pages/        # All page components (Home, Cart, Checkout…)
-│   │   └── routes/       # ProtectedRoute guard
+│   │   ├── routes/       # ProtectedRoute guard
+│   │   └── utils/        # Formatters, helper functions
 │   └── .env.example      # Copy to .env and configure
 │
-├── server/               # Express + MongoDB backend
-│   ├── controllers/      # Route handler logic
-│   ├── models/           # Mongoose schemas
-│   ├── routes/           # API route definitions
-│   ├── middlewares/      # Auth guard, error handler, rate limiter
-│   ├── jobs/             # Cron jobs (price alerts, reorder reminders)
-│   ├── utils/            # Token helpers, response helpers
-│   └── .env.example      # Copy to .env and configure
+├── server/               # Express + MongoDB backend (ES Modules)
+│   ├── src/
+│   │   ├── config/       # Database, environment, and Razorpay configurations
+│   │   ├── controllers/  # Route handlers (auth, product, cart, orders…)
+│   │   ├── jobs/         # Cron jobs (price alerts, reorder reminders)
+│   │   ├── middleware/   # Auth guard, error handler, rate limiter
+│   │   ├── models/       # Mongoose schemas (User, Product, Order, Review…)
+│   │   ├── routes/       # API route definitions (auth, products, categories…)
+│   │   ├── scripts/      # Database seeding and utility scripts
+│   │   ├── services/     # Third-party integrations & database updates
+│   │   ├── utils/        # Token, response, and coupon helpers
+│   │   └── server.js     # Express app startup & configuration
+│   └── package.json
 │
 └── .gitignore
 ```
@@ -107,11 +114,11 @@ cd server && npm install
 cd ../client && npm install
 ```
 
-### 4. Seed the database (optional)
+### 4. Seed the database
 
 ```bash
 cd server
-node seed.js
+npm run seed
 ```
 
 ### 5. Run the development servers
@@ -137,18 +144,17 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 | `delivery` | Delivery board (admin-assigned) |
 | `admin` | Full platform control |
 
-> **Note:** The `delivery` role is admin-assigned only — it cannot be self-registered.
-
 ---
 
 ## 🛡️ Security Highlights
 
-- JWT access tokens expire in 15 minutes; refresh tokens in 7 days
-- HttpOnly cookies for both tokens (XSS protection)
-- Admin self-registration blocked at the controller level
-- Atomic stock deduction using MongoDB `findOneAndUpdate` with conditions (prevents race conditions)
-- Rate limiting on the API server
-- Input validation with `express-validator` on all auth routes
+- **ES Modules**: Fully migrated from CommonJS to native ES Modules.
+- **Strict Cart Validation**: Restricts cart operations to clean positive integers, preventing schema-casting errors.
+- **State-Safe Status Alignment**: Updates stock levels atomically using aggregation update pipelines, keeping product statuses synchronized.
+- **Razorpay Refund Fallback**: Triggers automatic refunds if checking out fails after payment capture, eliminating payment-order mismatch.
+- **Non-blocking Logout Flow**: Decodes tokens ignoring expiration, enabling successful cookie clearing and DB token revocation under any state.
+- **JWT Authorization**: Dual-cookie configuration utilizing HttpOnly credentials to secure access and refresh states.
+- **Brute-Force Rate Limiting**: Dedicated endpoint request quotas.
 
 ---
 
