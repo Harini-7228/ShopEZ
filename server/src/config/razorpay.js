@@ -1,19 +1,25 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
+import config from './env.js';
 
 // Guard: fail fast if keys are missing rather than silently using hardcoded fallbacks.
 // Hardcoded secrets must never appear in source — use environment variables.
-const RAZORPAY_KEY_ID     = process.env.RAZORPAY_KEY_ID;
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+let razorpayInstance = null;
 
-if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-  console.warn('[Razorpay] WARNING: RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET env vars are not set. Razorpay calls will fail.');
-}
+const getRazorpayInstance = () => {
+  if (razorpayInstance) return razorpayInstance;
 
-const razorpayInstance = new Razorpay({
-  key_id:     RAZORPAY_KEY_ID     || '',
-  key_secret: RAZORPAY_KEY_SECRET || '',
-});
+  if (!config.razorpayKeyId || !config.razorpayKeySecret) {
+    throw new Error('Razorpay keys are not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.');
+  }
+
+  razorpayInstance = new Razorpay({
+    key_id: config.razorpayKeyId,
+    key_secret: config.razorpayKeySecret,
+  });
+
+  return razorpayInstance;
+};
 
 /**
  * Create Razorpay Order
@@ -32,7 +38,7 @@ const createRazorpayOrder = async (amount, currency = 'INR', options = {}) => {
       ...options,
     };
 
-    const order = await razorpayInstance.orders.create(orderData);
+    const order = await getRazorpayInstance().orders.create(orderData);
     return {
       success: true,
       data: order,
@@ -55,14 +61,13 @@ const createRazorpayOrder = async (amount, currency = 'INR', options = {}) => {
  */
 const verifyRazorpaySignature = (orderId, paymentId, signature) => {
   try {
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    if (!keySecret) {
+    if (!config.razorpayKeySecret) {
       console.error('[Razorpay] RAZORPAY_KEY_SECRET not set — signature verification will always fail');
       return false;
     }
     const text = `${orderId}|${paymentId}`;
     const generated_signature = crypto
-      .createHmac('sha256', keySecret)
+      .createHmac('sha256', config.razorpayKeySecret)
       .update(text)
       .digest('hex');
     return generated_signature === signature;
@@ -79,7 +84,7 @@ const verifyRazorpaySignature = (orderId, paymentId, signature) => {
  */
 const fetchPaymentDetails = async (paymentId) => {
   try {
-    const payment = await razorpayInstance.payments.fetch(paymentId);
+    const payment = await getRazorpayInstance().payments.fetch(paymentId);
     return {
       success: true,
       data: payment,
@@ -101,7 +106,7 @@ const fetchPaymentDetails = async (paymentId) => {
  */
 const captureRazorpayPayment = async (paymentId, amount) => {
   try {
-    const payment = await razorpayInstance.payments.capture(
+    const payment = await getRazorpayInstance().payments.capture(
       paymentId,
       Math.round(amount * 100)
     );
@@ -130,7 +135,7 @@ const refundRazorpayPayment = async (paymentId, amount = null) => {
     if (amount !== null) {
       refundData.amount = Math.round(amount * 100); // convert to paise
     }
-    const refund = await razorpayInstance.payments.refund(paymentId, refundData);
+    const refund = await getRazorpayInstance().payments.refund(paymentId, refundData);
     return {
       success: true,
       data: refund,

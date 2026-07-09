@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 import config from './config/env.js';
 import connectDB from './config/db.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -21,21 +22,17 @@ import adminRoutes from './routes/admin.js';
 import supportRoutes from './routes/support.js';
 import couponRoutes from './routes/coupons.js';
 
-// Import rate limiters
-import { globalLimiter, publicLimiter, authLimiter } from './middleware/rateLimiter.js';
-
 // Import background jobs
 import { runPriceAlertJob } from './jobs/priceAlertJob.js';
 import { runReorderReminderJob } from './jobs/reorderReminderJob.js';
 
 // Initialize Express App
 const app = express();
+let server;
+let jobInterval;
 
-// Trust the first proxy to ensure proper client IP extraction under rate limiters
+// Trust the first proxy to ensure proper client IP extraction behind deployments
 app.set('trust proxy', 1);
-
-// Connect to MongoDB
-connectDB();
 
 // Global Middlewares
 app.use(
@@ -47,16 +44,27 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Apply global rate limiter to all routes
-app.use(globalLimiter);
+app.get('/healthz', (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: 'live',
+    environment: config.env,
+  });
+});
+
+app.get('/readyz', (req, res) => {
+  const isDbReady = mongoose.connection.readyState === 1;
+  res.status(isDbReady ? 200 : 503).json({
+    success: isDbReady,
+    status: isDbReady ? 'ready' : 'not_ready',
+    database: isDbReady ? 'connected' : 'disconnected',
+  });
+});
 
 // Mount API Routes
-// Apply auth rate limiter strictly to login and registration paths
-app.use('/api/v1/auth/login',    authLimiter);
-app.use('/api/v1/auth/register', authLimiter);
 app.use('/api/v1/auth',          authRoutes);
-app.use('/api/v1/products',      publicLimiter, productRoutes);
-app.use('/api/v1/categories',    publicLimiter, categoryRoutes);
+app.use('/api/v1/products',      productRoutes);
+app.use('/api/v1/categories',    categoryRoutes);
 app.use('/api/v1/cart',          cartRoutes);
 app.use('/api/v1/wishlist',      wishlistRoutes);
 app.use('/api/v1/orders',        orderRoutes);
@@ -91,30 +99,64 @@ app.use((req, res, next) => {
 // Centralized Error Handler
 app.use(errorHandler);
 
-// Start server
-const server = app.listen(config.port, () => {
-  console.log(`Server running in ${config.env} mode on port ${config.port}`);
+const startServer = async () => {
+  await connectDB();
 
-  // Run background jobs immediately on startup
-  // setTimeout(() => {
-  //   runPriceAlertJob();
-  //   runReorderReminderJob();
-  // }, 3000);
+  server = app.listen(config.port, () => {
+    console.log(`Server running in ${config.env} mode on port ${config.port}`);
 
-  // Run background tasks periodically, ensuring rejections are caught properly
-  setInterval(async () => {
-    try {
-      await runPriceAlertJob();
-      await runReorderReminderJob();
-    } catch (jobErr) {
-      console.error('[JOBS] Unhandled job error:', jobErr.message);
-    }
-  }, 12 * 60 * 60 * 1000);
+    // Run background jobs immediately on startup
+    // setTimeout(() => {
+    //   runPriceAlertJob();
+    //   runReorderReminderJob();
+    // }, 3000);
+
+    // Run background tasks periodically, ensuring rejections are caught properly
+    jobInterval = setInterval(async () => {
+      try {
+        await runPriceAlertJob();
+        await runReorderReminderJob();
+      } catch (jobErr) {
+        console.error('[JOBS] Unhandled job error:', jobErr.message);
+      }
+    }, 12 * 60 * 60 * 1000);
+  });
+};
+
+startServer().catch((err) => {
+  console.error(`Failed to start server: ${err.message}`);
+  process.exit(1);
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   console.error(`Unhandled Rejection Error: ${err.message}`);
-  // Close server & exit process
-  server.close(() => process.exit(1));
+  shutdown(1);
+});
+
+const shutdown = async (exitCode = 0) => {
+  if (jobInterval) {
+    clearInterval(jobInterval);
+  }
+
+  await mongoose.disconnect().catch((err) => {
+    console.error(`MongoDB disconnect error: ${err.message}`);
+  });
+
+  if (server) {
+    server.close(() => process.exit(exitCode));
+    return;
+  }
+
+  process.exit(exitCode);
+};
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  shutdown(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received. Shutting down gracefully...');
+  shutdown(0);
 });

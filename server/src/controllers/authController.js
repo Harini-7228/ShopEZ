@@ -1,4 +1,6 @@
 import User from '../models/User.js';
+import crypto from 'node:crypto';
+import config from '../config/env.js';
 import { sendSuccess } from '../utils/apiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { authenticateUser, verifyAndGetRefreshTokenUser, revokeRefreshTokens, formatUserPayload, } from '../services/authService.js';
@@ -114,6 +116,67 @@ const login = asyncHandler(async (req, res, next) => {
   }
 
   await sendTokenResponse(user, 200, res, 'Logged in successfully');
+});
+
+/**
+ * @desc Request a password reset token
+ * @route POST /api/v1/auth/forgot-password
+ * @access Public
+ */
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+  const genericMessage = 'If an account exists for this email, password reset instructions have been prepared.';
+
+  const user = await User.findOne({ email }).select('+passwordResetToken +passwordResetExpires');
+  if (!user) {
+    return sendSuccess(res, null, genericMessage);
+  }
+
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  user.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  user.passwordResetExpires = new Date(Date.now() + 15 * 60 * 1000);
+  await user.save({ validateBeforeSave: false });
+
+  const resetPath = `/reset-password/${resetToken}`;
+  const resetUrl = `${req.protocol}://${req.get('host')}${resetPath}`;
+
+  const payload = config.env === 'production'
+    ? null
+    : { resetToken, resetPath, resetUrl, expiresInMinutes: 15 };
+
+  sendSuccess(res, payload, genericMessage);
+});
+
+/**
+ * @desc Reset password using a valid token
+ * @route POST /api/v1/auth/reset-password/:token
+ * @access Public
+ */
+const resetPassword = asyncHandler(async (req, res, next) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: new Date() },
+  }).select('+passwordResetToken +passwordResetExpires');
+
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: 'Password reset link is invalid or has expired',
+      data: null,
+    });
+  }
+
+  user.passwordHash = password;
+  user.passwordResetToken = null;
+  user.passwordResetExpires = null;
+  user.refreshTokenVersion = (user.refreshTokenVersion || 0) + 1;
+  await user.save();
+
+  sendSuccess(res, null, 'Password reset successfully. Please login with your new password.');
 });
 
 /**
@@ -250,4 +313,4 @@ const updateMe = asyncHandler(async (req, res, next) => {
   sendSuccess(res, formatUserPayload(updatedUser), 'Profile updated successfully');
 });
 
-export { register, login, refreshToken, logout, getMe, updateMe, };
+export { register, login, forgotPassword, resetPassword, refreshToken, logout, getMe, updateMe, };

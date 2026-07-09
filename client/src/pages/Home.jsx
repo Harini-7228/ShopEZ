@@ -58,7 +58,7 @@ const DropdownItem = ({ label, active, onClick }) => (
   </button>
 );
 
-const CategoryBar = ({ topLevelCategories, activeTopCategoryId, setParam, getEmoji }) => {
+const CategoryBar = ({ topLevelCategories, activeCategoryBarId, onCategoryClick, getEmoji }) => {
   const scrollerRef = useRef(null);
   const dragStateRef = useRef({ active: false, startX: 0, scrollLeft: 0 });
 
@@ -101,13 +101,13 @@ const CategoryBar = ({ topLevelCategories, activeTopCategoryId, setParam, getEmo
       >
         <div className="category-scroll-track">
           <button
-            onClick={() => setParam('category', '')}
+            onClick={() => onCategoryClick('__all__', '')}
             className="btn d-flex align-items-center gap-2 px-3 py-2 rounded-2 shadow-sm category-scroll-item"
             style={{
-              background: !activeTopCategoryId ? 'var(--primary-terracotta)' : '#ffffff',
-              color: !activeTopCategoryId ? '#ffffff' : 'var(--text-dark)',
+              background: activeCategoryBarId === '__all__' ? 'var(--primary-terracotta)' : '#ffffff',
+              color: activeCategoryBarId === '__all__' ? '#ffffff' : 'var(--text-dark)',
               border: '2px solid',
-              borderColor: !activeTopCategoryId ? 'var(--primary-terracotta)' : 'var(--border-clay)',
+              borderColor: activeCategoryBarId === '__all__' ? 'var(--primary-terracotta)' : 'var(--border-clay)',
               fontWeight: 600,
               fontSize: '0.8rem',
               transition: 'var(--transition-smooth)'
@@ -117,11 +117,11 @@ const CategoryBar = ({ topLevelCategories, activeTopCategoryId, setParam, getEmo
             <span>All Items</span>
           </button>
           {topLevelCategories.map(cat => {
-            const isActive = activeTopCategoryId === cat._id;
+            const isActive = activeCategoryBarId === cat._id;
             return (
               <button
                 key={cat._id}
-                onClick={() => setParam('category', cat._id)}
+                onClick={() => onCategoryClick(cat._id, cat._id)}
                 className="btn d-flex align-items-center gap-2 px-3 py-2 rounded-2 shadow-sm category-scroll-item"
                 style={{
                   background: isActive ? 'var(--primary-terracotta)' : '#ffffff',
@@ -167,6 +167,25 @@ const Home = () => {
 
   // Ref for scrolling to product grid when category is selected (logged-in only)
   const productsRef = useRef(null);
+  // null = no button highlighted on page load; set only on explicit user click
+  const [activeCategoryBarId, setActiveCategoryBarId] = useState(null);
+
+  // Called by CategoryBar buttons — highlights the clicked button and scrolls immediately
+  const handleCategoryBarClick = (barId, categoryValue) => {
+    setActiveCategoryBarId(barId);
+    const p = new URLSearchParams(searchParams);
+    p.set('page', '1');
+    if (categoryValue) p.set('category', categoryValue); else p.delete('category');
+    setSearchParams(p);
+    // Scroll immediately to the product grid (50ms lets React flush the state update)
+    setTimeout(() => {
+      if (productsRef.current) {
+        const headerOffset = 120;
+        const top = productsRef.current.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+      }
+    }, 50);
+  };
 
   const categoryEmojis = {
     groceries: '🍎', fashion: '👕', electronics: '💻', mobiles: '📱',
@@ -695,8 +714,8 @@ const Home = () => {
       <div className="pt-0 pb-3">
         <CategoryBar
           topLevelCategories={topLevelCategories}
-          activeTopCategoryId={activeTopCategoryId}
-          setParam={setParam}
+          activeCategoryBarId={activeCategoryBarId}
+          onCategoryClick={handleCategoryBarClick}
           getEmoji={getEmoji}
         />
         {renderBanners()}

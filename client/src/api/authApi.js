@@ -10,6 +10,16 @@ export const loginUser = async (email, password) => {
   return res.data;
 };
 
+export const requestPasswordReset = async (email) => {
+  const res = await apiClient.post('/auth/forgot-password', { email });
+  return res.data;
+};
+
+export const resetPassword = async (token, password) => {
+  const res = await apiClient.post(`/auth/reset-password/${token}`, { password });
+  return res.data;
+};
+
 export const logoutUserApi = async () => {
   const res = await apiClient.post('/auth/logout');
   return res.data;

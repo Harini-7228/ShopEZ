@@ -8,6 +8,8 @@ ShopEZ is a full-stack e-commerce web app built with the MERN stack. It supports
 
 **Customer**
 - Browse products by category, search by name, and filter by price range
+- Smart category bar with click-to-scroll navigation to filtered product results
+- Flash deals, trending collections, and premium product sections on the home page
 - Product detail page with specs, reviews, and related products
 - Add to cart, manage quantities, and proceed to checkout
 - Pay with Razorpay or a mock card flow
@@ -16,6 +18,7 @@ ShopEZ is a full-stack e-commerce web app built with the MERN stack. It supports
 - Set price drop and back-in-stock alerts
 - Reorder reminders for products bought before
 - Raise and track support tickets
+- Forgot password / reset password via email link
 - Edit profile details (name, phone)
 
 **Seller**
@@ -51,7 +54,6 @@ ShopEZ is a full-stack e-commerce web app built with the MERN stack. It supports
 - JWT (access + refresh tokens via HttpOnly cookies)
 - bcrypt for password hashing
 - express-validator for request validation
-- express-rate-limit for brute-force protection
 - Razorpay SDK
 - node-cron background jobs
 
@@ -73,7 +75,8 @@ ShopEZ/
 │   │   │   ├── admin/      # AdminDashboard, CategoryCrud, UserManagement, AllOrders, AdminSupportTickets
 │   │   │   ├── delivery/   # DeliveryDashboard
 │   │   │   ├── seller/     # SellerDashboard, ProductForm
-│   │   │   └── ...         # Home, ProductList, ProductDetail, Cart, Checkout, OrderHistory, etc.
+│   │   │   └── ...         # Home, ProductList, ProductDetail, Cart, Checkout, OrderHistory,
+│   │   │                   # ForgotPassword, ResetPassword, etc.
 │   │   ├── routes/         # ProtectedRoute (role-based guard)
 │   │   ├── utils/          # productVariants and other helpers
 │   │   └── index.css       # Global styles and CSS variables
@@ -85,7 +88,7 @@ ShopEZ/
 │   │   ├── config/         # db.js, env.js, razorpay.js
 │   │   ├── controllers/    # One file per domain
 │   │   ├── jobs/           # priceAlertJob.js, reorderReminderJob.js (run every 12h)
-│   │   ├── middleware/     # auth.js, errorHandler.js, rateLimiter.js, validate.js
+│   │   ├── middleware/     # auth.js, errorHandler.js, validate.js
 │   │   ├── models/         # User, Product, Order, Payment, Review, Cart, Wishlist, etc.
 │   │   ├── routes/         # Mounted under /api/v1/
 │   │   ├── scripts/        # seed.js, updateDbImages.js
@@ -170,7 +173,7 @@ Base URL: `http://localhost:5000/api/v1`
 
 | Prefix | Description |
 |---|---|
-| `/auth` | Register, login, logout, refresh token |
+| `/auth` | Register, login, logout, refresh token, forgot/reset password |
 | `/products` | Browse, search, filter products |
 | `/categories` | Category listing |
 | `/cart` | Cart CRUD |

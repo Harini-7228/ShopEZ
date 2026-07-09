@@ -5,12 +5,12 @@ import User from '../models/User.js';
 import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import config from '../config/env.js';
+import connectDB from '../config/db.js';
 
 const seedDB = async () => {
   try {
     console.log('Connecting to database for seeding...');
-    await mongoose.connect(config.mongoUri);
-    console.log('Connected to MongoDB.');
+    await connectDB();
 
     console.log('Clearing existing Collections...');
     await User.deleteMany({});

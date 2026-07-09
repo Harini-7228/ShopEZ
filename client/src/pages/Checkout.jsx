@@ -39,7 +39,7 @@ const OrderConfirmationView = ({ order, paymentMethod }) => (
       {paymentMethod === 'cod' ? 'Total Amount to pay:' : 'Total Amount paid:'} <strong>₹{order?.totalAmount?.toFixed(2)}</strong>
     </p>
     <div className="d-flex gap-3">
-      <Link to="/products" className="btn-earthy-outline">Continue Shopping</Link>
+      <Link to="/" className="btn-earthy-outline">Continue Shopping</Link>
       <Link to="/orders/history" className="btn-earthy">Track Order History</Link>
     </div>
   </Container>

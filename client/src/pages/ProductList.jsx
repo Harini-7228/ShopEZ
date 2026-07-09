@@ -196,41 +196,53 @@ const ProductList = () => {
 
   // Load products based on filter changes and page updates
   useEffect(() => {
-    const fetchCatalog = async () => {
-      setLoading(true);
-      try {
-        const page = parseInt(searchParams.get('page') || '1', 10);
-        const q = { page, limit: 12, status: 'active' };
-        
-        if (categoryFilter) q.category = categoryFilter;
-        if (searchFilter) q.search = searchFilter;
-        if (minPriceFilter) q.minPrice = minPriceFilter;
-        if (maxPriceFilter) q.maxPrice = maxPriceFilter;
-        if (inStockFilter) q.inStock = 'true';
-        if (hasDiscountFilter) q.hasDiscount = 'true';
-        if (featuredFilter) q.featuredOnly = 'true';
-        if (sortByFilter) q.sortBy = sortByFilter;
-        
-        // Add spec filters
-        if (Object.keys(specFilters).length > 0) {
-          q.specs = {};
-          Object.entries(specFilters).forEach(([k, v]) => {
-            q.specs[k] = v.join(',');
-          });
-        }
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      const fetchCatalog = async () => {
+        setLoading(true);
+        try {
+          const page = parseInt(searchParams.get('page') || '1', 10);
+          const q = { page, limit: 12, status: 'active' };
 
-        const res = await getProducts(q);
-        if (res && res.success) {
-          setProducts(res.data.products);
-          setPagination(res.data.pagination);
+          if (categoryFilter) q.category = categoryFilter;
+          if (searchFilter) q.search = searchFilter;
+          if (minPriceFilter) q.minPrice = minPriceFilter;
+          if (maxPriceFilter) q.maxPrice = maxPriceFilter;
+          if (inStockFilter) q.inStock = 'true';
+          if (hasDiscountFilter) q.hasDiscount = 'true';
+          if (featuredFilter) q.featuredOnly = 'true';
+          if (sortByFilter) q.sortBy = sortByFilter;
+
+          // Add spec filters
+          if (Object.keys(specFilters).length > 0) {
+            q.specs = {};
+            Object.entries(specFilters).forEach(([k, v]) => {
+              q.specs[k] = v.join(',');
+            });
+          }
+
+          const res = await getProducts(q, { signal: controller.signal });
+          if (res && res.success) {
+            setProducts(res.data.products);
+            setPagination(res.data.pagination);
+          }
+        } catch (err) {
+          if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') {
+            console.error(err);
+          }
+        } finally {
+          if (!controller.signal.aborted) {
+            setLoading(false);
+          }
         }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+      };
+      fetchCatalog();
+    }, 150);
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
     };
-    fetchCatalog();
   }, [searchParams]);
 
   const handlePageChange = (pageNo) => {

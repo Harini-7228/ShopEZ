@@ -111,6 +111,12 @@ const Login = () => {
                   </InputGroup>
                 </Form.Group>
 
+                <div className="text-end mb-3">
+                  <Link to="/forgot-password" className="small text-primary fw-semibold">
+                    Forgot password?
+                  </Link>
+                </div>
+
                 <Button
                   type="submit"
                   className="btn-earthy w-100 py-2"

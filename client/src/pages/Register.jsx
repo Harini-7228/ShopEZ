@@ -86,7 +86,7 @@ const Register = () => {
     }
 
     // Fix #23: Phone number format validation (if provided)
-    if (formData.phone && !/^[\+]?[\d\s\-\(\)]{7,15}$/.test(formData.phone)) {
+    if (formData.phone && !/^[+]?[\d\s\-()]{7,15}$/.test(formData.phone)) {
       setError('Please enter a valid phone number (digits, spaces, +, - allowed)');
       return;
     }
