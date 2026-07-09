@@ -13,10 +13,13 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
   const { accessToken, refreshToken, userPayload } = await authenticateUser(user);
 
   // Cookie options
+  // In production, frontend (Vercel) and backend (Render) are on different domains,
+  // so SameSite must be 'none' (with Secure=true) to allow cross-site cookie sending.
+  const isProduction = process.env.NODE_ENV === 'production';
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
   };
 
   // Set cookies
@@ -252,10 +255,11 @@ const logout = asyncHandler(async (req, res, next) => {
     await revokeRefreshTokens(userId);
   }
 
+  const isProduction = process.env.NODE_ENV === 'production';
   const cookieClearOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
   };
   res.clearCookie('accessToken', cookieClearOptions);
   res.clearCookie('refreshToken', cookieClearOptions);
