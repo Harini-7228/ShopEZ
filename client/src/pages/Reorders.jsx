@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { getReorderSuggestions, runReorderAction } from '../api/reorders';
+import { getReorderSuggestions, runReorderAction } from '../api/reordersApi';
 import { Container, Row, Col, Card, Button, Form, Image, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 
@@ -74,7 +74,9 @@ const Reorders = () => {
             const product = item.productId;
             if (!product) return null;
 
-            const price = product.discountPrice || product.price;
+            const price = (product.discountPrice != null && product.discountPrice > 0)
+              ? product.discountPrice
+              : product.price;
 
             return (
               <Col key={item._id} xs={12} md={6}>

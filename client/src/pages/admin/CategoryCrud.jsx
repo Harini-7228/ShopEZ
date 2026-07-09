@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createAdminCategory, updateAdminCategory, deleteAdminCategory } from '../../api/admin';
+import { createAdminCategory, updateAdminCategory, deleteAdminCategory } from '../../api/adminApi';
 import apiClient from '../../api/apiClient';
 import { Container, Row, Col, Card, Form, Button, Table, Alert, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';

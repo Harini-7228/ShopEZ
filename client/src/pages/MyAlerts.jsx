@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { listAlerts, unsubscribeAlert } from '../api/alerts';
+import { listAlerts, unsubscribeAlert } from '../api/alertsApi';
 import { Container, Row, Col, Card, Button, Badge, Image, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 
@@ -31,13 +31,18 @@ const MyAlerts = () => {
       const res = await unsubscribeAlert(alertId);
       if (res && res.success) {
         toast.success('Unsubscribed from alert successfully');
-        // Filter out locally to prevent page reload lag
         setAlerts((prev) => prev.filter((a) => a._id !== alertId));
       }
     } catch (err) {
       toast.error('Failed to unsubscribe');
     }
   };
+
+  // Sort alerts newest first — `triggered` field doesn't exist on PriceAlert model,
+  // so the previous sort by it was a no-op. Sort by createdAt descending instead.
+  const sortedAlerts = [...alerts].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   if (loading) {
     return (
@@ -53,7 +58,7 @@ const MyAlerts = () => {
 
       {alerts.length > 0 ? (
         <Row className="gy-4">
-          {alerts.map((alert) => {
+          {sortedAlerts.map((alert) => {
             const product = alert.productId;
             if (!product) return null;
 

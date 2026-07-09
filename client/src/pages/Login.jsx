@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate, Link, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Container, Row, Col, Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Alert, Spinner, InputGroup } from 'react-bootstrap';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { user, loading, loginUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  // If ProtectedRoute redirected here, restore the originally intended path after login
+  const from = location.state?.from || null;
 
   // Fix #14: Redirect already-logged-in users away from /login
   if (!loading && user) {
@@ -41,8 +45,10 @@ const Login = () => {
 
     if (result && result.success) {
       const { role } = result.user;
-      // Role-based redirection
-      if (role === 'admin') {
+      // If coming from a protected route, go back there; otherwise use role default
+      if (from) {
+        navigate(from, { replace: true });
+      } else if (role === 'admin') {
         navigate('/admin');
       } else if (role === 'seller') {
         navigate('/seller');
@@ -84,14 +90,25 @@ const Login = () => {
 
                 <Form.Group className="mb-2" controlId="loginPassword">
                   <Form.Label className="small fw-semibold">Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="form-control-earthy"
-                    disabled={submitting}
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="form-control-earthy"
+                      disabled={submitting}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      className="small"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={submitting}
+                      title={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? '👁️‍🗨️' : '👁️'}
+                    </Button>
+                  </InputGroup>
                 </Form.Group>
 
                 <Button

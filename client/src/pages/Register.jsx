@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Container, Row, Col, Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Alert, Spinner, Badge } from 'react-bootstrap';
+
+// Password strength checker function
+const getPasswordStrength = (password) => {
+  let strength = 0;
+  
+  if (password.length >= 8) strength++;
+  if (password.length >= 12) strength++;
+  if (/[A-Z]/.test(password)) strength++;  // Uppercase
+  if (/[a-z]/.test(password)) strength++;  // Lowercase
+  if (/[0-9]/.test(password)) strength++;  // Numbers
+  if (/[^A-Za-z0-9]/.test(password)) strength++;  // Special chars
+  
+  if (strength <= 2) return { level: 'Weak', color: 'danger', width: '33%' };
+  if (strength <= 4) return { level: 'Fair', color: 'warning', width: '66%' };
+  return { level: 'Strong', color: 'success', width: '100%' };
+};
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +32,7 @@ const Register = () => {
 
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(null);
   const { user, loading, registerUser } = useAuth();
   const navigate = useNavigate();
 
@@ -33,6 +50,11 @@ const Register = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
+    
+    // Track password strength
+    if (name === 'password') {
+      setPasswordStrength(getPasswordStrength(value));
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -155,6 +177,29 @@ const Register = () => {
                         className="form-control-earthy"
                         disabled={submitting}
                       />
+                      
+                      {/* Password Strength Meter */}
+                      {formData.password && passwordStrength && (
+                        <div className="mt-2">
+                          <div className="d-flex justify-content-between align-items-center mb-1">
+                            <small className="text-muted">Password Strength</small>
+                            <Badge bg={passwordStrength.color} className="small">
+                              {passwordStrength.level}
+                            </Badge>
+                          </div>
+                          <div className="progress" style={{ height: '6px' }}>
+                            <div
+                              className={`progress-bar bg-${passwordStrength.color}`}
+                              style={{ width: passwordStrength.width }}
+                            />
+                          </div>
+                          <ul className="password-strength-requirements">
+                            <li>✓ At least 8 characters</li>
+                            <li>✓ Mix of uppercase and lowercase</li>
+                            <li>✓ Include numbers and special characters</li>
+                          </ul>
+                        </div>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col sm={6}>

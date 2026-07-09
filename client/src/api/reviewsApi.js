@@ -5,8 +5,13 @@ export const createReview = async (data) => {
   return res.data;
 };
 
-export const getProductReviews = async (productId) => {
-  const res = await apiClient.get(`/reviews/product/${productId}`);
+/**
+ * Fetch paginated reviews for a product.
+ * @param {string} productId
+ * @param {object} params - Optional: { page, limit }
+ */
+export const getProductReviews = async (productId, params = {}) => {
+  const res = await apiClient.get(`/reviews/product/${productId}`, { params });
   return res.data;
 };
 

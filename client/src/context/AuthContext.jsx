@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, useCallback, useRef } from 'react';
-import apiClient, { setAccessToken, setLogoutCallback } from '../api/apiClient';
+import { setAccessToken, setLogoutCallback } from '../api/apiClient';
+import { registerUser as apiRegister, loginUser as apiLogin, logoutUserApi as apiLogout, getMeProfile, refreshAuthToken } from '../api/authApi';
 import { toast } from 'react-hot-toast';
 
 const AuthContext = createContext(null);
@@ -9,28 +10,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const isLoggingOutRef = useRef(false);
 
-  // Fix #12: Use useCallback so logoutUser has a stable reference.
-  // Fix #20: Removed console.warn that fired on every unauthenticated page load.
   const logoutUser = useCallback(async () => {
-    // Guard: prevent multiple concurrent logout calls from showing duplicate toasts
     if (isLoggingOutRef.current) return;
     isLoggingOutRef.current = true;
     try {
-      await apiClient.post('/auth/logout');
+      await apiLogout();
     } catch (err) {
-      // Silently ignore — server-side logout error should not block client cleanup
+      // Silently ignore
     } finally {
       setAccessToken('');
       setUser(null);
       setLoading(false);
-      toast.dismiss(); // clear any stacked toasts first
+      toast.dismiss();
       toast.success('Logged out successfully', { duration: 2000 });
-      // Reset flag after a short delay so future logouts work
       setTimeout(() => { isLoggingOutRef.current = false; }, 2500);
     }
   }, []);
 
-  // Fix #12: Store logoutUser in a ref so the interceptor always has the latest version
   const logoutUserRef = useRef(logoutUser);
   useEffect(() => {
     logoutUserRef.current = logoutUser;
@@ -38,14 +34,17 @@ export const AuthProvider = ({ children }) => {
 
   const loginUser = async (email, password) => {
     try {
-      const res = await apiClient.post('/auth/login', { email, password });
-      if (res.data && res.data.success) {
-        const { user: loggedUser, accessToken } = res.data.data;
+      const data = await apiLogin(email, password);
+      if (data && data.success) {
+        const { user: loggedUser, accessToken } = data.data;
         setAccessToken(accessToken);
         setUser(loggedUser);
-        toast.success(res.data.message || 'Logged in successfully');
+        toast.success(data.message || 'Logged in successfully');
         return { success: true, user: loggedUser };
       }
+      const msg = data?.message || 'Login failed. Please try again.';
+      toast.error(msg);
+      return { success: false, error: msg };
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Login failed. Please check credentials.';
       toast.error(errMsg);
@@ -55,14 +54,17 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (userData) => {
     try {
-      const res = await apiClient.post('/auth/register', userData);
-      if (res.data && res.data.success) {
-        const { user: registeredUser, accessToken } = res.data.data;
+      const data = await apiRegister(userData);
+      if (data && data.success) {
+        const { user: registeredUser, accessToken } = data.data;
         setAccessToken(accessToken);
         setUser(registeredUser);
         toast.success('Registered successfully');
         return { success: true, user: registeredUser };
       }
+      const msg = data?.message || 'Registration failed. Please try again.';
+      toast.error(msg);
+      return { success: false, error: msg };
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Registration failed';
       toast.error(errMsg);
@@ -72,12 +74,11 @@ export const AuthProvider = ({ children }) => {
 
   const fetchCurrentUser = async () => {
     try {
-      const res = await apiClient.get('/auth/me');
-      if (res.data && res.data.success) {
-        setUser(res.data.data);
+      const data = await getMeProfile();
+      if (data && data.success) {
+        setUser(data.data);
       }
     } catch (err) {
-      // Fix #20: Removed console.warn — this fires silently on every unauthenticated visit
       setAccessToken('');
       setUser(null);
     } finally {
@@ -85,14 +86,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Perform silent refresh and load profile details on mount
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Silently hit refresh first
-        const res = await apiClient.post('/auth/refresh-token');
-        if (res.data && res.data.success) {
-          const { accessToken } = res.data.data;
+        const data = await refreshAuthToken();
+        if (data && data.success) {
+          const { accessToken } = data.data;
           setAccessToken(accessToken);
           await fetchCurrentUser();
         } else {
@@ -103,7 +102,6 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    // Fix #12: Pass a stable wrapper so interceptor always calls the latest logoutUser
     setLogoutCallback(() => logoutUserRef.current());
     initializeAuth();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

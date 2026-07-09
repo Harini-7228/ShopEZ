@@ -38,12 +38,12 @@ const Layout = () => {
       <main className="flex-grow-1 py-2">
         {isDashboard ? (
           <Container fluid className="px-lg-5">
-            <Row>
-              <Col xs={12} md={3} lg={2} className="mb-4">
+            <Row className="align-items-stretch">
+              <Col xs={12} md={3} lg={3} className="mb-4 d-flex flex-column sidebar-custom">
                 <Sidebar />
               </Col>
-              <Col xs={12} md={9} lg={10}>
-                <div className="bg-white p-4 border border-clay rounded-3 shadow-sm min-vh-50">
+              <Col xs={12} md={9} lg={9} className="mb-4 d-flex flex-column grid-custom">
+                <div className="card-earthy p-4 min-vh-50 flex-grow-1">
                   <Outlet />
                 </div>
               </Col>
@@ -51,7 +51,7 @@ const Layout = () => {
           </Container>
         ) : (
           <Container fluid className="px-3 px-xl-5">
-            <Outlet />
+            <Outlet key={location.key} />
           </Container>
         )}
       </main>

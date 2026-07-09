@@ -1,5 +1,5 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
 
 :root {
   /* Premium Corporate Blue & Slate Grey color palette */
@@ -33,8 +33,8 @@
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.1);
   --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-sans: 'Nunito', system-ui, -apple-system, sans-serif;
-  --font-display: 'Nunito', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 body {
@@ -128,17 +128,24 @@ a:hover {
 /* Flat Card designs (No large circles, sharp corporate grids) */
 .card-earthy {
   background-color: #fff;
-  border: 1px solid var(--border-clay);
-  border-radius: 8px;
-  /* flat corners */
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-smooth);
+  border: 1px solid var(--border-clay) !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
 .card-earthy:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+}
+
+.product-img-zoom {
+  transition: transform 0.5s ease;
+}
+
+.card-earthy:hover .product-img-zoom {
+  transform: scale(1.06);
 }
 
 /* Flat Status Badges */
@@ -191,7 +198,7 @@ a:hover {
 /* Navbar customization */
 .navbar-earthy {
   background-color: #ffffff;
-  border-bottom: 1px solid var(--border-clay);
+  border-bottom: 2px solid var(--border-clay) !important;
   padding: 0.75rem 1.5rem;
 }
 
@@ -205,7 +212,7 @@ a:hover {
 
 /* Form inputs styling (Flat edges) */
 .form-control-earthy {
-  border: 1px solid var(--border-clay);
+  border: 1px solid var(--border-clay) !important;
   background-color: #fff;
   border-radius: 6px;
   /* flat corners */
@@ -213,6 +220,11 @@ a:hover {
   color: var(--text-dark);
   font-size: 0.95rem;
   transition: var(--transition-smooth);
+}
+
+select.form-control-earthy,
+.form-select.form-control-earthy {
+  padding-right: 2.25rem;
 }
 
 .form-control-earthy:focus {
@@ -224,7 +236,7 @@ a:hover {
 /* Table layout styling (Flat) */
 .table-earthy {
   background-color: #fff;
-  border: 1px solid var(--border-clay);
+  border: 1px solid var(--border-clay) !important;
   border-radius: 6px;
   overflow: hidden;
 }
@@ -263,11 +275,16 @@ a:hover {
 
 /* Sidebar styling for dashboards (Flat) */
 .sidebar-earthy {
-  background-color: #fff;
+  background-color: var(--secondary-sand);
   border: 1px solid var(--border-clay);
   border-radius: 8px;
   padding: 1.2rem 0.8rem;
   box-shadow: var(--shadow-sm);
+}
+
+/* Global List Group Border override */
+.list-group.border {
+  border: 1px solid var(--border-clay) !important;
 }
 
 .sidebar-link {
@@ -278,6 +295,7 @@ a:hover {
   border-radius: 6px;
   margin-bottom: 0.3rem;
   transition: var(--transition-smooth);
+  white-space: nowrap;
 }
 
 .sidebar-link:hover,
@@ -289,7 +307,7 @@ a:hover {
 
 /* Variant Pill selection - rectangular */
 .variant-pill {
-  border: 2px solid var(--border-clay);
+  border: 1px solid var(--border-clay);
   border-radius: 4px;
   /* flat corners */
   padding: 0.35rem 1rem;
@@ -318,7 +336,7 @@ a:hover {
   object-fit: cover;
   border-radius: 4px;
   /* flat corners */
-  border: 2px solid var(--border-clay);
+  border: 1px solid var(--border-clay);
   cursor: pointer;
   transition: var(--transition-smooth);
   margin-right: 0.4rem;
@@ -372,8 +390,303 @@ a:hover {
     flex: 0 0 21% !important;
     max-width: 21% !important;
   }
+
   .grid-custom {
     flex: 0 0 79% !important;
     max-width: 79% !important;
+  }
+}
+
+/* Thicker borders for checkboxes and radio buttons */
+.form-check-input {
+  border: 2px solid #94a3b8 !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-terracotta) !important;
+  border-color: var(--primary-terracotta) !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--primary-terracotta) !important;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   LANDING PAGE SECTIONS (Pre-login)
+══════════════════════════════════════════════════════════════════════ */
+
+.landing-badge-label {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-terracotta);
+  background: rgba(30, 58, 138, 0.08);
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  margin-bottom: 0.3rem;
+}
+
+.landing-section-heading {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+}
+
+.landing-compact-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e2e8f0 !important;
+  background-color: #fff;
+}
+
+.landing-compact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.landing-compact-card .product-img {
+  transition: transform 0.5s ease;
+}
+
+.landing-compact-card:hover .product-img {
+  transform: scale(1.05);
+}
+
+.landing-flash-section,
+.landing-trending-section,
+.landing-why-section,
+.landing-reviews-section {
+  border-radius: 16px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Scrollbar hiding helper */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.category-scroll-shell {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 0 8px;
+  overflow: hidden;
+}
+
+.category-scroll-container {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  cursor: grab;
+  touch-action: pan-x;
+  user-select: none;
+}
+
+.category-scroll-container.is-dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+}
+
+.category-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.category-scroll-track {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  max-width: none;
+  padding: 0.5rem 0.25rem;
+}
+
+.category-scroll-item {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  .category-scroll-track {
+    gap: 0.75rem;
+  }
+}
+
+/* Animations */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PRODUCT IMAGE ZOOM EFFECT (Improvement #6)
+══════════════════════════════════════════════════════════════════════ */
+
+.product-image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image-container img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+}
+
+/* Mobile: Disable zoom on touch devices */
+@media (max-width: 768px) {
+  .product-image-container img {
+    transform: scale(1) !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   FORM VALIDATION HIGHLIGHTING (Improvement #8)
+══════════════════════════════════════════════════════════════════════ */
+
+.form-control-earthy:invalid {
+  border-color: var(--primary-terracotta) !important;
+  box-shadow: inset 0 0 0 1px rgba(30, 58, 138, 0.15);
+}
+
+.form-control-earthy:valid {
+  border-color: var(--primary-terracotta) !important;
+}
+
+.form-control-earthy:focus:invalid {
+  border-color: var(--primary-terracotta) !important;
+  box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.15);
+}
+
+.form-control-earthy:focus:valid {
+  border-color: var(--primary-terracotta) !important;
+  box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.15);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PASSWORD STRENGTH METER (Improvement #9)
+══════════════════════════════════════════════════════════════════════ */
+
+.password-strength-bar {
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background-color: #e2e8f0;
+  margin: 0.5rem 0;
+}
+
+.password-strength-bar .progress-bar {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.password-strength-requirements {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.password-strength-requirements li {
+  padding: 0.2rem 0;
+  color: #64748b;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   IMAGE LAZY LOADING (Phase 3 - Improvement #21)
+══════════════════════════════════════════════════════════════════════ */
+
+img[loading="lazy"] {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+img[loading="lazy"]:not([src*="data:"]) {
+  min-height: 200px;
+  background-color: #f8f9fa;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PAGINATION OPTIMIZATION (Phase 3 - Improvement #22)
+══════════════════════════════════════════════════════════════════════ */
+
+.pagination {
+  margin: 0.75rem 0 1rem 0;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.page-link {
+  color: var(--primary-terracotta);
+  border-color: var(--border-clay);
+  border-radius: 4px;
+  margin: 0 2px;
+  padding: 0.5rem 0.75rem;
+}
+
+.page-link:hover {
+  color: var(--primary-dark-terracotta);
+  background-color: var(--secondary-sand);
+}
+
+.page-link.active {
+  background-color: var(--primary-terracotta);
+  border-color: var(--primary-terracotta);
+}
+
+.page-item.disabled .page-link {
+  opacity: 0.5;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TRENDING PRODUCTS PULSE ANIMATION
+══════════════════════════════════════════════════════════════════════ */
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
   }
 }

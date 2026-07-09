@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getSalesSummary, getTopSellers, getLowStockReport } from '../../api/admin';
+import { getSalesSummary, getTopSellers, getLowStockReport } from '../../api/adminApi';
 import { Container, Row, Col, Card, Table, Badge, Button, ProgressBar, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 
@@ -39,6 +39,17 @@ const AdminDashboard = () => {
     );
   }
 
+  // Guard: API may have failed — render a safe fallback instead of crashing
+  if (!salesSummary) {
+    return (
+      <div className="p-5 text-center text-muted">
+        <div className="fs-1 mb-3">⚠️</div>
+        <h5>Failed to load dashboard metrics</h5>
+        <p className="small">Please refresh the page or try again later.</p>
+      </div>
+    );
+  }
+
   const { totalRevenue, transactionCount, orders } = salesSummary;
 
   return (
@@ -47,6 +58,74 @@ const AdminDashboard = () => {
         <h3 className="fw-bold text-dark mb-0">Platform Overview Dashboard</h3>
         <p className="text-muted small">Analyze system metrics, top small merchants, and critical inventory warnings.</p>
       </div>
+
+      {/* Summary Cards */}
+      <Row className="mb-4 gy-3">
+        <Col md={3}>
+          <Card className="card-earthy p-4 border-0 shadow-sm">
+            <div className="d-flex justify-content-between align-items-start">
+              <div>
+                <p className="text-muted small fw-semibold mb-1">Total Revenue</p>
+                <h4 className="fw-bold text-dark mb-0">₹{(totalRevenue || 0).toLocaleString()}</h4>
+              </div>
+              <span className="fs-2">💰</span>
+            </div>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card className="card-earthy p-4 border-0 shadow-sm">
+            <div className="d-flex justify-content-between align-items-start">
+              <div>
+                <p className="text-muted small fw-semibold mb-1">Total Orders</p>
+                <h4 className="fw-bold text-dark mb-0">{transactionCount || 0}</h4>
+              </div>
+              <span className="fs-2">📦</span>
+            </div>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card className="card-earthy p-4 border-0 shadow-sm">
+            <div className="d-flex justify-content-between align-items-start">
+              <div>
+                <p className="text-muted small fw-semibold mb-1">Low Stock Items</p>
+                <h4 className="fw-bold text-danger mb-0">{lowStock.length}</h4>
+              </div>
+              <span className="fs-2">⚠️</span>
+            </div>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card className="card-earthy p-4 border-0 shadow-sm">
+            <div className="d-flex justify-content-between align-items-start">
+              <div>
+                <p className="text-muted small fw-semibold mb-1">Top Merchants</p>
+                <h4 className="fw-bold text-dark mb-0">{topSellers.length}</h4>
+              </div>
+              <span className="fs-2">👑</span>
+            </div>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Quick Action Buttons */}
+      <Row className="mb-4">
+        <Col xs={12}>
+          <div className="d-flex gap-2 flex-wrap">
+            <Button as={Link} to="/admin/categories" className="btn-earthy btn-sm">
+              📂 Manage Categories
+            </Button>
+            <Button as={Link} to="/admin/users" className="btn-earthy btn-sm">
+              👥 User Management
+            </Button>
+            <Button as={Link} to="/admin/orders" className="btn-earthy btn-sm">
+              📦 All Orders
+            </Button>
+            <Button as={Link} to="/admin/support" className="btn-earthy btn-sm">
+              💬 Support Tickets
+            </Button>
+          </div>
+        </Col>
+      </Row>
 
       {/* Numerical summaries */}
       <Row className="gy-4 mb-4">

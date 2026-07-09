@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getMyOrders, updateOrderStatus } from '../../api/orders';
+import { getMyOrders, updateOrderStatus } from '../../api/ordersApi';
 import { Container, Table, Button, Badge, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 
@@ -27,6 +27,10 @@ const DeliveryDashboard = () => {
   }, []);
 
   const handleUpdateStatus = async (orderId, nextStatus, logNote) => {
+    // Confirm before marking delivered — action is irreversible
+    if (nextStatus === 'delivered') {
+      if (!window.confirm('Confirm this order has been delivered? This cannot be undone.')) return;
+    }
     try {
       const res = await updateOrderStatus(orderId, {
         status: nextStatus,
@@ -34,8 +38,8 @@ const DeliveryDashboard = () => {
       });
 
       if (res && res.success) {
-        toast.success(`Package successfully updated to: ${nextStatus.replace(/_/g, ' ')}`);
-        await loadShipments(); // refresh local status list
+        toast.success(`Package updated to: ${nextStatus.replace(/_/g, ' ')}`);
+        await loadShipments();
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Status transition failed');
@@ -50,9 +54,11 @@ const DeliveryDashboard = () => {
     );
   }
 
-  // Segment shipments
-  const availableShipments = orders.filter((o) => o.status === 'shipped');
-  const activeDeliveries = orders.filter((o) => o.status === 'out_for_delivery');
+  // Segment shipments — server now returns only:
+  //   - unassigned shipped orders (claimable)
+  //   - orders assigned to this delivery agent
+  const availableShipments  = orders.filter((o) => o.status === 'shipped' && !o.deliveryManagerId);
+  const activeDeliveries    = orders.filter((o) => o.status === 'out_for_delivery');
   const completedDeliveries = orders.filter((o) => o.status === 'delivered');
 
   return (
@@ -82,7 +88,7 @@ const DeliveryDashboard = () => {
                   <td className="small font-monospace">{o._id}</td>
                   <td className="fw-semibold text-dark">{o.userId?.name}</td>
                   <td className="small text-muted">{o.shippingAddress?.street}, {o.shippingAddress?.city}</td>
-                  <td>₹{o.totalAmount.toFixed(2)}</td>
+                  <td>₹{(o.totalAmount ?? 0).toFixed(2)}</td>
                   <td className="text-end">
                     <Button
                       onClick={() => handleUpdateStatus(o._id, 'delivered', 'Driver delivered parcel to recipient shipping address.')}

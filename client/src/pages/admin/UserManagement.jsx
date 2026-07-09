@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAdminUsers, updateUserRole, deleteUserByAdmin } from '../../api/admin';
+import { getAdminUsers, updateUserRole, deleteUserByAdmin } from '../../api/adminApi';
 import { useAuth } from '../../context/AuthContext';
 import { Container, Table, Button, Form, Badge, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
@@ -13,7 +13,10 @@ const UserManagement = () => {
     try {
       const res = await getAdminUsers();
       if (res && res.success) {
-        setUsers(res.data);
+        // Server now returns paginated shape: { users: [], pagination: {} }
+        // Fall back to res.data directly if it's a plain array (old shape)
+        const list = Array.isArray(res.data) ? res.data : (res.data?.users ?? []);
+        setUsers(list);
       }
     } catch (err) {
       console.error(err);

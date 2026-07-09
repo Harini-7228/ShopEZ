@@ -4,12 +4,15 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // Context Providers
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 
-// Layout & Guards
-import Layout from './components/Layout';
+// Components
+import Layout from './components/common/Layout';
 import ProtectedRoute from './routes/ProtectedRoute';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Public & Customer Pages
+import Landing from './pages/Landing';
 import Home from './pages/Home';
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
@@ -17,6 +20,7 @@ import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import Checkout from './pages/Checkout';
 import OrderHistory from './pages/OrderHistory';
+import PaymentHistory from './pages/PaymentHistory';
 import OrderDetail from './pages/OrderDetail';
 import MyAlerts from './pages/MyAlerts';
 import Reorders from './pages/Reorders';
@@ -37,17 +41,27 @@ import CategoryCrud from './pages/admin/CategoryCrud';
 import UserManagement from './pages/admin/UserManagement';
 import AllOrders from './pages/admin/AllOrders';
 
+// Support Pages
+import SupportTickets from './pages/SupportTickets';
+import SupportTicketDetail from './pages/SupportTicketDetail';
+import AdminSupportTickets from './pages/admin/AdminSupportTickets';
+
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <CartProvider>
-          <Routes>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Routes>
             {/* Primary Layout Wrapping Route */}
             <Route path="/" element={<Layout />}>
+              {/* Landing Page for Non-Authenticated Users */}
+              <Route path="/landing" element={<Landing />} />
+              
               {/* Public Views */}
               <Route index element={<Home />} />
-              <Route path="products" element={<Home />} />
+              <Route path="products" element={<ProductList />} />
               <Route path="products/:id" element={<ProductDetail />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
@@ -96,6 +110,14 @@ function App() {
                 }
               />
               <Route
+                path="payments/history"
+                element={
+                  <ProtectedRoute allowedRoles={['customer']}>
+                    <PaymentHistory />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="orders/:id"
                 element={
                   <ProtectedRoute allowedRoles={['customer', 'seller', 'delivery', 'admin']}>
@@ -116,6 +138,22 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['customer']}>
                     <Reorders />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="support"
+                element={
+                  <ProtectedRoute allowedRoles={['customer']}>
+                    <SupportTickets />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="support/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                    <SupportTicketDetail />
                   </ProtectedRoute>
                 }
               />
@@ -205,14 +243,24 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="admin/support"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminSupportTickets />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Fallback to Home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
-        </CartProvider>
-      </AuthProvider>
-    </Router>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

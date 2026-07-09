@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getAdminOrders } from '../../api/admin';
+import { getAdminOrders } from '../../api/adminApi';
 import { Container, Table, Form, Badge, Button, Row, Col, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 
@@ -91,10 +91,10 @@ const AllOrders = () => {
                   <td>{new Date(o.createdAt).toLocaleDateString()}</td>
                   <td className="fw-semibold text-dark">{o.userId?.name}</td>
                   <td className="small text-muted">{o.shippingAddress?.city}, {o.shippingAddress?.state}</td>
-                  <td className="fw-bold">₹{o.totalAmount.toFixed(2)}</td>
+                  <td className="fw-bold">₹{(o.totalAmount ?? 0).toFixed(2)}</td>
                   <td>
-                    <Badge className={`badge-status badge-${o.status ? o.status.toLowerCase() : ''}`}>
-                      {o.status.replace(/_/g, ' ')}
+                    <Badge className={`badge-status badge-${o.status?.toLowerCase() ?? ''}`}>
+                      {o.status?.replace(/_/g, ' ') ?? 'unknown'}
                     </Badge>
                   </td>
                   <td className="text-end">

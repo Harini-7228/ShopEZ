@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getProductById, createProduct, updateProduct } from '../../api/products';
+import { getProductById, createProduct, updateProduct } from '../../api/productsApi';
 import apiClient from '../../api/apiClient';
 import { Container, Row, Col, Card, Form, Button, Alert, Table, Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
@@ -136,10 +136,22 @@ const ProductForm = () => {
       specificationsObj[item.key.trim()] = item.value.trim();
     });
 
-    // Format images list
+    // Validate and format image URLs
     const imagesArr = formData.images
-      ? formData.images.split(',').map((img) => img.trim()).filter((img) => img)
+      ? formData.images
+          .split(',')
+          .map((img) => img.trim())
+          .filter((img) => {
+            if (!img) return false;
+            try { new URL(img); return true; } catch { return false; }
+          })
       : [];
+
+    if (formData.images && imagesArr.length === 0) {
+      setError('Please enter valid image URLs (must start with http:// or https://)');
+      setSubmitting(false);
+      return;
+    }
 
     const payload = {
       name: formData.name,

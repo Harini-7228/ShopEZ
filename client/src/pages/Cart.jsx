@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { toggleWishlistItem } from '../api/wishlist';
+import { toggleWishlistItem } from '../api/wishlistApi';
 import { Container, Row, Col, Card, Button, Form, Image, ListGroup } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 
@@ -59,8 +59,10 @@ const Cart = () => {
     );
   }
 
-  // Fix #2/#13: Use safe price helper
+  // Fix: guard against null productId (deleted product still in cart,
+  // or populate failed) — skip the item instead of crashing.
   const subtotal = cart.items.reduce((sum, item) => {
+    if (!item.productId) return sum;
     return sum + getEffectivePrice(item.productId) * item.quantity;
   }, 0);
 
@@ -164,10 +166,13 @@ const Cart = () => {
             </div>
             <Button
               onClick={() => navigate('/checkout')}
-              className="btn-earthy w-100 py-2 fw-semibold"
+              className="btn-earthy w-100 py-2 fw-semibold mb-2"
             >
               Proceed to Checkout
             </Button>
+            <Link to="/products" className="btn btn-outline-secondary w-100 py-2 fw-semibold">
+              Continue Shopping
+            </Link>
           </Card>
         </Col>
       </Row>

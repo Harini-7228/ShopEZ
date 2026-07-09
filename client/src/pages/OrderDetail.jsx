@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getOrderById, cancelOrder } from '../api/orders';
+import { getOrderById, cancelOrder } from '../api/ordersApi';
 import { Container, Row, Col, Card, Badge, Table, Image, Spinner, Button } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 
@@ -27,6 +27,51 @@ const OrderDetail = () => {
   }, [id]);
 
   const [cancelling, setCancelling] = useState(false);
+
+  const handleDownloadInvoice = () => {
+    if (!order) return;
+    
+    const invoiceContent = `
+SHOPEZ INVOICE
+====================
+Order ID: ${order._id}
+Date: ${new Date(order.createdAt).toLocaleDateString()}
+
+SHIPPING ADDRESS:
+${order.shippingAddress.street}
+${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.zip}
+${order.shippingAddress.country}
+
+ITEMS:
+${order.items.map(item => {
+  // Use item.price (snapshotted at order time), NOT item.productId.price (current price).
+  // Current price may have changed since the order was placed — the invoice must
+  // reflect what the customer actually paid.
+  const name = item.productId?.name || 'Unknown Product';
+  const unitPrice = item.price ?? item.productId?.price ?? 0;
+  return `${name} x${item.quantity} = ₹${(unitPrice * item.quantity).toFixed(2)}`;
+}).join('\n')}
+
+Subtotal: ₹${order.totalAmount.toFixed(2)}
+Shipping: FREE
+TOTAL: ₹${order.totalAmount.toFixed(2)}
+
+Payment Method: ${order.paymentMethod === 'razorpay' ? 'Online' : 'Cash on Delivery'}
+Status: ${order.status}
+====================
+    `.trim();
+
+    const blob = new Blob([invoiceContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Invoice-${order._id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    toast.success('Invoice downloaded');
+  };
 
   const handleCancelOrder = async () => {
     if (!window.confirm('Are you sure you want to cancel this order? This action will restock the items and refund your payment.')) {
@@ -62,14 +107,13 @@ const OrderDetail = () => {
       <div className="position-relative ps-4 ms-2" style={{ borderLeft: '3px solid var(--border-clay)' }}>
         {statusHistory.map((history, idx) => {
           const isLast = idx === statusHistory.length - 1;
-          
+
           return (
             <div key={history._id || idx} className="position-relative mb-4">
               {/* Timeline indicator node */}
               <span
-                className={`position-absolute start-0 translate-middle rounded-circle d-flex align-items-center justify-content-center ${
-                  isLast ? 'bg-success text-white' : 'bg-secondary bg-opacity-20 text-muted'
-                }`}
+                className={`position-absolute start-0 translate-middle rounded-circle d-flex align-items-center justify-content-center ${isLast ? 'bg-success text-white' : 'bg-secondary bg-opacity-20 text-muted'
+                  }`}
                 style={{
                   left: '-26px',
                   width: '24px',
@@ -154,6 +198,13 @@ const OrderDetail = () => {
               )}
             </Button>
           )}
+          <Button
+            className="btn-earthy btn-sm px-3 py-2"
+            onClick={handleDownloadInvoice}
+            title="Download invoice as text file"
+          >
+            📄 Invoice
+          </Button>
           <Badge className={`badge-status badge-${order.status ? order.status.toLowerCase() : ''} fs-6 py-2 px-3`}>
             {order.status.replace(/_/g, ' ')}
           </Badge>
@@ -227,17 +278,17 @@ const OrderDetail = () => {
                   <h6 className="mb-0 text-dark fw-bold">
                     {order.status === 'delivered'
                       ? new Date(order.updatedAt).toLocaleDateString(undefined, {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
                       : new Date(order.estimatedDeliveryDate || new Date(new Date(order.createdAt).getTime() + 5 * 24 * 60 * 60 * 1000)).toLocaleDateString(undefined, {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
                   </h6>
                   <span className="small text-muted">
                     {order.status === 'delivered' ? 'Successfully delivered to recipient' : 'Estimated transit time'}
@@ -276,7 +327,11 @@ const OrderDetail = () => {
             </div>
             <hr />
             <div className="d-flex justify-content-between fw-bold text-dark fs-5">
-              <span>Total Paid</span>
+              <span>
+                {order.paymentId?.method === 'cod' && order.paymentId?.status !== 'success'
+                  ? 'Total to Pay'
+                  : 'Total Paid'}
+              </span>
               <span className="text-primary">₹{order.totalAmount.toFixed(2)}</span>
             </div>
           </Card>
