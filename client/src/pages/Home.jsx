@@ -642,6 +642,10 @@ const Home = () => {
         <div className="position-relative overflow-hidden" style={{ borderRadius: '10px 10px 0 0' }}>
           <Card.Img variant="top"
             src={product.images?.[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400'}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400';
+            }}
             className="product-img-zoom"
             style={{ height: '125px', objectFit: 'cover' }} />
           {disc > 0 && <Badge bg="danger" className="position-absolute m-2 top-0 start-0 px-2 py-0.5" style={{ borderRadius: '3px', fontSize: '0.62rem', fontWeight: 700 }}>{disc}% OFF</Badge>}

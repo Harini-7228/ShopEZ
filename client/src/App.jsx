@@ -12,7 +12,6 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Public & Customer Pages
-import Landing from './pages/Landing';
 import Home from './pages/Home';
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
@@ -58,9 +57,6 @@ function App() {
               <Routes>
             {/* Primary Layout Wrapping Route */}
             <Route path="/" element={<Layout />}>
-              {/* Landing Page for Non-Authenticated Users */}
-              <Route path="/landing" element={<Landing />} />
-              
               {/* Public Views */}
               <Route index element={<Home />} />
               <Route path="products" element={<ProductList />} />

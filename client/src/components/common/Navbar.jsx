@@ -41,7 +41,7 @@ const AppNavbar = memo(() => {
   return (
     <Navbar expand="lg" variant="light" className="navbar-earthy shadow-sm sticky-top">
       <Container fluid className="px-3 px-xl-5">
-        <Navbar.Brand as={Link} to={user ? "/" : "/landing"} className="navbar-brand-earthy me-4">
+        <Navbar.Brand as={Link} to="/" className="navbar-brand-earthy me-4">
           🛍️ ShopEZ
         </Navbar.Brand>
         
@@ -68,15 +68,9 @@ const AppNavbar = memo(() => {
 
           {/* Right Side Navigation */}
           <Nav className="align-items-center ms-auto">
-            {user ? (
-              <Nav.Link as={Link} to="/" className="px-3 fw-bold text-dark">
-                Explore
-              </Nav.Link>
-            ) : (
-              <Nav.Link as={Link} to="/landing" className="px-3 fw-bold text-dark">
-                Explore
-              </Nav.Link>
-            )}
+            <Nav.Link as={Link} to="/" className="px-3 fw-bold text-dark">
+              Explore
+            </Nav.Link>
 
             {/* Wishlist and Cart Links - only shown to logged-in customers */}
             {user && user.role === 'customer' && (

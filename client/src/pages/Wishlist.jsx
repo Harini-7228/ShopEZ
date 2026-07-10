@@ -81,6 +81,10 @@ const Wishlist = () => {
                     <Col xs={3} sm={2}>
                       <Image
                         src={product.images?.[0] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=60'}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=60';
+                        }}
                         rounded
                         fluid
                         style={{ height: '70px', width: '70px', objectFit: 'cover' }}

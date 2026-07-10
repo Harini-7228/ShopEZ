@@ -26,9 +26,9 @@ const config = {
 // Hard-fail on missing production secrets — never allow startup with known-weak defaults
 if (config.env === 'production') {
   const missing = [];
-  if (!process.env.JWT_ACCESS_SECRET)  missing.push('JWT_ACCESS_SECRET');
+  if (!process.env.JWT_ACCESS_SECRET) missing.push('JWT_ACCESS_SECRET');
   if (!process.env.JWT_REFRESH_SECRET) missing.push('JWT_REFRESH_SECRET');
-  if (!process.env.MONGO_URI)          missing.push('MONGO_URI');
+  if (!process.env.MONGO_URI) missing.push('MONGO_URI');
   if (missing.length > 0) {
     console.error(
       `FATAL: Missing required environment variables: ${missing.join(', ')}. ` +

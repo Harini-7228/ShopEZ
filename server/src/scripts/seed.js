@@ -210,7 +210,7 @@ const seedDB = async () => {
         description: 'Handcrafted solid oak desk set with phone dock, pen tray, paper drawer, and card holder sections.',
         price: 1999, discountPrice: 1499,
         category: catFurniture._id, sellerId: seller._id, stock: 18, sku: 'FURN-DKORG-02', status: 'active',
-        images: ['http://localhost:5173/oak_desk_organizer.png'],
+        images: ['/oak_desk_organizer.png'],
         specifications: { 'Wood': 'Solid Oak', 'Finish': 'Natural Matte', 'Compartments': '5', 'Dimensions': '35×20×15 cm' }
       },
       {
@@ -244,7 +244,7 @@ const seedDB = async () => {
         description: 'Space-saving dial-adjust dumbbell pair. Replaces 15 sets of weights and clicks to exact weight in seconds.',
         price: 12999, discountPrice: 9999,
         category: catSports._id, sellerId: seller._id, stock: 11, sku: 'SPRT-DUMB-02', status: 'active',
-        images: ['https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Range': '5–25 kg', 'Adjustment': 'Dial Select', 'Plates': 'Steel + Rubber', 'Grip': 'Anti-Slip' }
       },
       {
@@ -252,7 +252,7 @@ const seedDB = async () => {
         description: 'Extra-thick 6mm TPE yoga mat with alignment lines, dual-sided texture and carry strap. Eco-friendly.',
         price: 1499, discountPrice: 999,
         category: catSports._id, sellerId: seller._id, stock: 45, sku: 'SPRT-YOGA-03', status: 'active',
-        images: ['https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Thickness': '6mm', 'Material': 'Eco-TPE', 'Dimensions': '183×61 cm', 'Texture': 'Dual-sided' }
       },
       {
@@ -286,7 +286,7 @@ const seedDB = async () => {
         description: 'Deep conditioning mask with 100% pure Moroccan Argan oil, keratin, and biotin for frizz-free, glossy hair.',
         price: 899, discountPrice: 649,
         category: catBeauty._id, sellerId: seller._id, stock: 48, sku: 'BEAU-HAIR-03', status: 'active',
-        images: ['https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Key Oil': 'Moroccan Argan', 'Protein': 'Keratin + Biotin', 'Volume': '200g', 'Usage': 'Weekly' }
       },
 
@@ -312,7 +312,7 @@ const seedDB = async () => {
         description: 'Single-origin Ethiopian Yirgacheffe medium roast. Notes of blueberry, jasmine and dark chocolate.',
         price: 799, discountPrice: 599,
         category: catGroceries._id, sellerId: seller._id, stock: 65, sku: 'GROC-COFFEE-03', status: 'active',
-        images: ['https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Origin': 'Yirgacheffe, Ethiopia', 'Roast': 'Medium', 'Weight': '250g', 'Notes': 'Blueberry, Jasmine' }
       },
 
@@ -348,7 +348,7 @@ const seedDB = async () => {
         description: 'Educational 3-in-1 programmable robot kit for kids 8+. Teaches coding logic, electronics, and problem-solving.',
         price: 2499, discountPrice: 1899,
         category: catToysEdu._id, sellerId: seller._id, stock: 30, sku: 'TOYS-ROBOT-01', status: 'active',
-        images: ['http://localhost:5173/stem_robot_kit.png'],
+        images: ['/stem_robot_kit.png'],
         specifications: { 'Age Group': '8+ Years', 'Skill': 'STEM/Coding', 'Modes': '3-in-1 Builds', 'Language': 'Block Coding', 'Pieces': '200+' }
       },
       {
@@ -356,7 +356,7 @@ const seedDB = async () => {
         description: 'Classic rainbow stacking toy crafted from solid beech wood with non-toxic organic paint. Develops fine motor skills.',
         price: 899, discountPrice: 699,
         category: catToysEdu._id, sellerId: seller._id, stock: 45, sku: 'TOYS-SORT-02', status: 'active',
-        images: ['https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Age Group': '1-4 Years', 'Skill': 'Motor Skills', 'Material': 'Solid Beech Wood', 'Paint': 'Non-toxic Organic', 'Pieces': '9 Shapes' }
       },
       {
@@ -374,7 +374,7 @@ const seedDB = async () => {
         description: 'Tri-ply stainless steel pans with ceramic non-stick coating, induction compatible and heat-resistant handles.',
         price: 4999, discountPrice: 3799,
         category: catKitchen._id, sellerId: seller._id, stock: 20, sku: 'KTCHN-COOK-01', status: 'active',
-        images: ['https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Pieces': '5', 'Material': 'Tri-ply SS', 'Compatible': 'Induction + Gas', 'Coating': 'Ceramic Non-Stick' }
       },
       {
@@ -382,7 +382,7 @@ const seedDB = async () => {
         description: 'Rapid hot-air circulation with 12 preset programs, digital display and dishwasher-safe basket.',
         price: 6499, discountPrice: 4999,
         category: catKitchen._id, sellerId: seller._id, stock: 14, sku: 'KTCHN-AIRFRY-02', status: 'active',
-        images: ['https://images.unsplash.com/photo-1621972750749-0fbb1abb7736?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1544233726-9f1d2b27be8b?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Capacity': '5 Litres', 'Wattage': '1700W', 'Programs': '12 Presets', 'Temp': '80°C–200°C' }
       },
       {
@@ -390,7 +390,7 @@ const seedDB = async () => {
         description: 'Masticating slow juicer at 60 RPM for maximum nutrient retention. Works on fruits, veggies and leafy greens.',
         price: 8999, discountPrice: 6999,
         category: catKitchen._id, sellerId: seller._id, stock: 10, sku: 'KTCHN-JUCR-03', status: 'active',
-        images: ['http://localhost:5173/cold_press_slow_juicer.png'],
+        images: ['/cold_press_slow_juicer.png'],
         specifications: { 'Speed': '60 RPM', 'Motor': '200W', 'Yield': 'Up to 85%', 'Parts': 'Dishwasher Safe' }
       },
 
@@ -400,7 +400,7 @@ const seedDB = async () => {
         description: 'Measures 13 body metrics via bioelectrical impedance. Syncs to iOS and Android via Bluetooth 5.0.',
         price: 2499, discountPrice: 1799,
         category: catHealth._id, sellerId: seller._id, stock: 35, sku: 'HLTH-SCALE-01', status: 'active',
-        images: ['https://images.unsplash.com/photo-1580100586938-02822d99c4a8?w=600&auto=format&fit=crop&q=80'],
+        images: ['https://images.unsplash.com/photo-1628362621175-1036f0152bf0?w=600&auto=format&fit=crop&q=80'],
         specifications: { 'Metrics': '13 Body Stats', 'Sync': 'Bluetooth 5.0', 'Capacity': '180 kg', 'Surface': 'Tempered Glass' }
       },
       {
@@ -460,7 +460,7 @@ const seedDB = async () => {
         description: 'Whisper-quiet pump keeps water fresh 24/7 with triple-layer carbon filtration. For cats and small dogs.',
         price: 1799, discountPrice: 1299,
         category: catPets._id, sellerId: seller._id, stock: 32, sku: 'PET-WATER-02', status: 'active',
-        images: ['http://localhost:5173/water_fountain.png'],
+        images: ['/water_fountain.png'],
         specifications: { 'Capacity': '2.5 Litres', 'Pump': 'Silent 1.5W', 'Filter': '3-layer Carbon', 'Power': 'USB-C' }
       },
 
@@ -478,7 +478,7 @@ const seedDB = async () => {
         description: 'Ergonomic memory foam pillow with washable velvet cover. Compresses small with carry pouch. 180g.',
         price: 999, discountPrice: 699,
         category: catTravel._id, sellerId: seller._id, stock: 55, sku: 'TRV-PILW-02', status: 'active',
-        images: ['http://localhost:5173/travel_pillow.png'],
+        images: ['/travel_pillow.png'],
         specifications: { 'Fill': 'Memory Foam', 'Cover': 'Velvet Washable', 'Packs': 'Carry Pouch', 'Weight': '180g' }
       },
       {
@@ -486,7 +486,7 @@ const seedDB = async () => {
         description: 'Works in 150+ countries. 4 USB-A + 1 USB-C PD 30W + 2 AC sockets simultaneously. Built-in surge protection.',
         price: 1499, discountPrice: 1099,
         category: catTravel._id, sellerId: seller._id, stock: 45, sku: 'TRV-ADPT-03', status: 'active',
-        images: ['http://localhost:5173/travel_adapter.png'],
+        images: ['/travel_adapter.png'],
         specifications: { 'Countries': '150+', 'USB-C PD': '30W', 'USB-A': '4 Ports', 'AC': '2 Simultaneous' }
       },
 
@@ -504,7 +504,7 @@ const seedDB = async () => {
         description: '5" IPS screen, 1080p camera, 2-way audio, infrared night vision and room temperature sensor.',
         price: 4999, discountPrice: 3799,
         category: catBaby._id, sellerId: seller._id, stock: 16, sku: 'BABY-MON-02', status: 'active',
-        images: ['http://localhost:5173/baby_monitor.png'],
+        images: ['/baby_monitor.png'],
         specifications: { 'Screen': '5" IPS', 'Camera': '1080p', 'Vision': 'IR Night', 'Audio': '2-Way Talk-Back' }
       },
       {
@@ -512,7 +512,7 @@ const seedDB = async () => {
         description: 'Animals, numbers, alphabets, shapes and colours — 5 themed wooden puzzles. Non-toxic BPA-free paint.',
         price: 1099, discountPrice: 799,
         category: catBaby._id, sellerId: seller._id, stock: 50, sku: 'BABY-PUZZ-03', status: 'active',
-        images: ['http://localhost:5173/wooden_puzzle.png'],
+        images: ['/wooden_puzzle.png'],
         specifications: { 'Sets': '5 Themed', 'Age': '2–6 Years', 'Material': 'Solid Wood', 'Safety': 'BPA-Free' }
       },
     ];

@@ -297,6 +297,10 @@ const ProductDetail = () => {
               <Card.Img
                 variant="top"
                 src={galleryImages[activeImageIndex]}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = defaultImages[0];
+                }}
                 style={{ 
                   objectFit: 'cover', 
                   height: '300px', 
@@ -325,6 +329,10 @@ const ProductDetail = () => {
               <img
                 key={index}
                 src={imgUrl}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = defaultImages[0];
+                }}
                 alt={`product thumbnail ${index}`}
                 className={`thumbnail-img ${activeImageIndex === index ? 'active' : ''}`}
                 onClick={() => setActiveImageIndex(index)}
