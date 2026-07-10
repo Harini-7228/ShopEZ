@@ -170,25 +170,13 @@ const Home = () => {
   // null = no button highlighted on page load; set only on explicit user click
   const [activeCategoryBarId, setActiveCategoryBarId] = useState(null);
 
-  // Called by CategoryBar buttons — highlights the clicked button and scrolls immediately
+  // Called by CategoryBar buttons — navigates directly to the products search page pre-filtered
   const handleCategoryBarClick = (barId, categoryValue) => {
     if (barId === '__all__') {
       navigate('/products');
       return;
     }
-    setActiveCategoryBarId(barId);
-    const p = new URLSearchParams(searchParams);
-    p.set('page', '1');
-    if (categoryValue) p.set('category', categoryValue); else p.delete('category');
-    setSearchParams(p);
-    // Scroll immediately to the product grid (50ms lets React flush the state update)
-    setTimeout(() => {
-      if (productsRef.current) {
-        const headerOffset = 120;
-        const top = productsRef.current.getBoundingClientRect().top + window.scrollY - headerOffset;
-        window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
-      }
-    }, 50);
+    navigate(`/products?category=${encodeURIComponent(categoryValue)}`);
   };
 
   const categoryEmojis = {
