@@ -489,14 +489,7 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Scroll to product grid when any category bar button is clicked (logged-in users only)
-  useEffect(() => {
-    if (user && productsRef.current) {
-      setTimeout(() => {
-        productsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  }, [categoryFilter, user]);
+
 
   const pricePillLabel = (() => {
     const match = PRICE_RANGES.find(r => r.min === minPriceFilter && r.max === maxPriceFilter);
