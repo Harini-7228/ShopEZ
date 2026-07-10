@@ -1250,8 +1250,8 @@ const Home = () => {
     <div className="pt-0 pb-3">
       <CategoryBar
         topLevelCategories={topLevelCategories}
-        activeTopCategoryId={activeTopCategoryId}
-        setParam={setParam}
+        activeCategoryBarId={activeCategoryBarId}
+        onCategoryClick={handleCategoryBarClick}
         getEmoji={getEmoji}
       />
       {renderBanners()}
