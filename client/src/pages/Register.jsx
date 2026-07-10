@@ -74,10 +74,7 @@ const Register = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
+
 
     // Fix #3: Confirm password validation
     if (formData.password !== formData.confirmPassword) {
@@ -171,7 +168,7 @@ const Register = () => {
                       <Form.Control
                         type="password"
                         name="password"
-                        placeholder="•••••••• (Min 6 chars)"
+                        placeholder="••••••••"
                         value={formData.password}
                         onChange={handleInputChange}
                         className="form-control-earthy"

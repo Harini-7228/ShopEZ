@@ -395,14 +395,7 @@ const seedDB = async () => {
       },
 
       // ── HEALTH & WELLNESS ────────────────────────────────────────────
-      {
-        name: 'Smart Body Weighing Scale',
-        description: 'Measures 13 body metrics via bioelectrical impedance. Syncs to iOS and Android via Bluetooth 5.0.',
-        price: 2499, discountPrice: 1799,
-        category: catHealth._id, sellerId: seller._id, stock: 35, sku: 'HLTH-SCALE-01', status: 'active',
-        images: ['https://images.unsplash.com/photo-1628362621175-1036f0152bf0?w=600&auto=format&fit=crop&q=80'],
-        specifications: { 'Metrics': '13 Body Stats', 'Sync': 'Bluetooth 5.0', 'Capacity': '180 kg', 'Surface': 'Tempered Glass' }
-      },
+
       {
         name: 'Whey Protein Isolate 1kg — Chocolate',
         description: '25g protein per serving, 5g BCAA, low sugar, Informed Sport certified. Mixes instantly with zero clumping.',
