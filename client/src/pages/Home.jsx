@@ -172,6 +172,10 @@ const Home = () => {
 
   // Called by CategoryBar buttons — highlights the clicked button and scrolls immediately
   const handleCategoryBarClick = (barId, categoryValue) => {
+    if (barId === '__all__') {
+      navigate('/products');
+      return;
+    }
     setActiveCategoryBarId(barId);
     const p = new URLSearchParams(searchParams);
     p.set('page', '1');
