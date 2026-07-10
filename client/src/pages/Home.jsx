@@ -919,7 +919,7 @@ const Home = () => {
           </div>
         )}
 
-        <hr className="my-4" style={{ borderColor: 'var(--border-clay)', opacity: 0.15 }} />
+        <hr className="my-4" style={{ borderTop: '1.5px solid var(--border-clay)', opacity: 0.6 }} />
 
         {/* Premium Products Section */}
         {premiumProducts.length > 0 && (
