@@ -31,8 +31,7 @@ client/src/
 
 | Page | Description |
 |---|---|
-| `Home` | Logged-in home with category bar, flash deals, trending, premium products, and full product grid. Category bar buttons scroll directly to filtered results. |
-| `Landing` | Guest landing page with flash deals and trending sections |
+| `Home` | Home page (for both logged-in and guest users) with category bar, flash deals, trending, premium products, and full product grid. Category bar buttons route directly to `/products` with filters. |
 | `ProductList` | Filterable, sortable product catalogue with spec filters |
 | `ProductDetail` | Product images, specs, reviews, add to cart/wishlist |
 | `Cart` | Cart management with coupon input |
@@ -72,3 +71,14 @@ Copy `.env.example` to `.env`:
 VITE_API_URL=/api/v1
 VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
 ```
+
+---
+
+## Deployment (Vercel)
+
+1. Connect your repository to **Vercel**.
+2. Set the **Root Directory** of the project to `client`.
+3. In Vercel's **Environment Variables** settings, configure the following:
+   - `VITE_API_URL`: Set to your deployed Render backend URL (must end with `/api/v1`, e.g. `https://shopez-8sel.onrender.com/api/v1`).
+   - `VITE_RAZORPAY_KEY_ID`: Set to your public Razorpay test/live key.
+4. Redeploy the project on Vercel after saving these variables so they are baked into the production bundle.

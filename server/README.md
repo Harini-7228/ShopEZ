@@ -88,3 +88,22 @@ Base URL: `http://localhost:5000/api/v1`
 | `/seller` | Seller dashboard, product management |
 | `/admin` | Admin panel — users, orders, categories, tickets |
 | `/support` | Customer support tickets |
+
+---
+
+## Deployment (Render)
+
+The server is configured for deployment on **Render**:
+1. Connect your repository and create a new **Web Service**.
+2. Set the **Root Directory** of the service to `server`.
+3. Render will read the configuration:
+   - Build Command: `npm install`
+   - Start Command: `npm start`
+4. Set the following environment variables in the Render dashboard:
+   - `PORT`: Set to `10000` (or leave blank; Render defaults to `10000`).
+   - `NODE_ENV`: Set to `production`.
+   - `MONGO_URI`: Your MongoDB Atlas connection URI.
+   - `JWT_ACCESS_SECRET` & `JWT_REFRESH_SECRET`: Secure secret keys for token generation.
+   - `CORS_ORIGIN`: Set to your frontend Vercel domain (e.g., `https://shopez-smoky.vercel.app`).
+   - `RAZORPAY_KEY_ID` & `RAZORPAY_KEY_SECRET`: Your Razorpay Test or Production credentials.
+

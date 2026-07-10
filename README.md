@@ -201,6 +201,30 @@ Two coupons are available at checkout:
 
 ---
 
+## Deployment
+
+### Backend (Render)
+The backend is configured to be deployed as a Web Service on **Render** using the [`render.yaml`](./render.yaml) blueprint:
+1. Connect your GitHub repository to Render.
+2. The blueprint will automatically detect the `server` directory as the root folder.
+3. Configure the following environment variables in the Render dashboard:
+   - `MONGO_URI`: Your MongoDB Atlas connection string.
+   - `JWT_ACCESS_SECRET` & `JWT_REFRESH_SECRET`: Secure random strings for token signing.
+   - `RAZORPAY_KEY_ID` & `RAZORPAY_KEY_SECRET`: Your Razorpay credentials.
+   - `CORS_ORIGIN`: Set to your frontend Vercel domain (e.g. `https://your-app.vercel.app`).
+   - `NODE_ENV`: Set to `production`.
+
+### Frontend (Vercel)
+The React SPA is deployed on **Vercel**:
+1. Connect your repository to Vercel and import the project.
+2. Set the **Root Directory** of your Vercel project to `client`.
+3. Vercel will automatically configure the build settings (Build Command: `npm run build`, Output Directory: `dist`).
+4. Set the following environment variables in the Vercel project settings:
+   - `VITE_API_URL`: Your full Render backend URL *with the API prefix* (e.g., `https://your-backend.onrender.com/api/v1`).
+   - `VITE_RAZORPAY_KEY_ID`: Your public Razorpay Test/Live Key ID.
+
+---
+
 ## License
 
 MIT
