@@ -919,6 +919,8 @@ const Home = () => {
           </div>
         )}
 
+        <hr className="my-4" style={{ borderColor: 'var(--border-clay)', opacity: 0.15 }} />
+
         {/* Premium Products Section */}
         {premiumProducts.length > 0 && (
           <div className="mb-4">
