@@ -2,6 +2,8 @@
 
 Express.js API backend connected to MongoDB via Mongoose. Uses ES Modules, JWT dual-cookie authentication, Razorpay payment integration, background cron jobs, and atomic inventory management.
 
+🔗 **API Endpoint:** [https://shopez-8sel.onrender.com/api/v1](https://shopez-8sel.onrender.com/api/v1)
+
 ---
 
 ## Project Structure

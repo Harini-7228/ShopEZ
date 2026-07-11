@@ -2,6 +2,9 @@
 
 ShopEZ is a full-stack e-commerce web app built with the MERN stack. It supports four user roles — customer, seller, delivery manager, and admin — each with their own dedicated interface. The backend is a REST API built with Express.js and MongoDB, and the frontend is a React SPA using Vite.
 
+🔗 **Live Demo:** [https://shopez-smoky.vercel.app](https://shopez-smoky.vercel.app)  
+🔗 **API Endpoint:** [https://shopez-8sel.onrender.com/api/v1](https://shopez-8sel.onrender.com/api/v1)
+
 ---
 
 ## Features

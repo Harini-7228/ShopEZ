@@ -2,6 +2,8 @@
 
 React frontend built with Vite, React Bootstrap, and a custom CSS design system.
 
+🔗 **Live Demo:** [https://shopez-smoky.vercel.app](https://shopez-smoky.vercel.app)
+
 ---
 
 ## Project Structure
