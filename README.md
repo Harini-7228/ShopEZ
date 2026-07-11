@@ -128,7 +128,13 @@ The `VITE_API_URL=/api/v1` default in `client/.env` works as-is for local develo
 
 ### 3. Install dependencies
 
+Install dependencies for root (for concurrent execution), client, and server:
+
 ```bash
+# Install root dependency
+npm install
+
+# Install server and client dependencies
 cd server && npm install
 cd ../client && npm install
 ```
@@ -144,12 +150,22 @@ This creates categories, products, and the default user accounts listed below.
 
 ### 5. Start the servers
 
-```bash
-# Terminal 1
-cd server && npm run dev    # runs on http://localhost:5000
+**Option A: Concurrently (Recommended)**
+You can start both the client and server concurrently from the root directory:
 
-# Terminal 2
-cd client && npm run dev    # runs on http://localhost:5173
+```bash
+npm run dev
+```
+
+**Option B: Separately**
+Alternatively, you can start them in separate terminal windows:
+
+```bash
+# Terminal 1 - Backend (runs on http://localhost:5000)
+cd server && npm run dev
+
+# Terminal 2 - Frontend (runs on http://localhost:5173)
+cd client && npm run dev
 ```
 
 ---
